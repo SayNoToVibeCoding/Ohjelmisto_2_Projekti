@@ -1,10 +1,6 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return redirect('/login')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -14,9 +10,8 @@ def login():
 
         print(username, password)
 
-        return "Toimii!"
+        return "OK"
 
     return render_template('login.html')
 
-if __name__ == '__main__':
-    app.run(debug=True)
+app.run(debug=True)

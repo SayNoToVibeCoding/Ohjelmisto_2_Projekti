@@ -1,21 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login</title>
+    <title>Game Login</title>
+
+    <style>
+        body {
+            background-color: #0f0f1a;
+            color: white;
+            font-family: Arial;
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        .box {
+            background-color: #1c1c2e;
+            width: 300px;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 95%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+
 </head>
 <body>
 
-<h2>Kirjaudu peliin</h2>
+<h1>🎮 GAME LOGIN</h1>
 
-<form method="POST">
-    <label>Kayttajanimi:</label><br>
-    <input type="text" name="username" required><br><br>
+<div class="box">
+    <h2>Kirjaudu peliin</h2>
 
-    <label>Salasana:</label><br>
-    <input type="password" name="password" required><br><br>
+    <input type="text" placeholder="Käyttäjänimi"><br>
+    <input type="password" placeholder="Salasana"><br>
 
-    <button type="submit">Kirjaudu</button>
-</form>
+    <button>Login</button>
+</div>
 
 </body>
 </html>
