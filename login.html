@@ -51,11 +51,28 @@
 <div class="box">
     <h2>Kirjaudu peliin</h2>
 
-    <input type="text" placeholder="Käyttäjänimi"><br>
-    <input type="password" placeholder="Salasana"><br>
+    <input id="user" type="text" placeholder="Käyttäjänimi"><br>
+    <input id="password" type="password" placeholder="Salasana"><br>
 
-    <button>Login</button>
+    <button onclick="login()">Login</button>
 </div>
+
+<script>
+async function login() {
+    const user = document.getElementById("user").value;
+    const password = document.getElementById("password").value;
+
+    await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ user, password })
+    });
+
+    alert("Olet kirjautunut, onneksi olkoon!");
+}
+</script>
 
 </body>
 </html>
