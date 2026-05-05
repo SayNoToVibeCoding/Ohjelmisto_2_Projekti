@@ -1,3 +1,4 @@
+console.log('playerName in storage:', localStorage.getItem('playerName'));
 let currentPlayer = null;
 let currentGameState = {
     fuel: 100,
@@ -7,8 +8,8 @@ let currentGameState = {
 };
 
 function initGame(playerName) {
+    console.log('initGame called with:', playerName);
     currentPlayer = playerName;
-    
     fetch('http://localhost:5000/api/game/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -192,8 +193,14 @@ function closeModal() {
 }
 
 window.addEventListener('load', function() {
-    const playerName = prompt('Anna pilotinnimi:');
+    const playerName = localStorage.getItem('playerName');
+    console.log('Page loaded, playerName from storage:', playerName);
+    
     if (playerName) {
+        console.log('Calling initGame with:', playerName);
         initGame(playerName);
+    } else {
+        console.log('No player name found, redirecting to login');
+        window.location.href = '/';
     }
 });

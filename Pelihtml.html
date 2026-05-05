@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <header class="top-bar">
         <div class="stat-group">
             <span class="label">POLTTOAINE</span>
@@ -16,7 +15,6 @@
             </div>
             <span id="fuel-value">100%</span>
         </div>
-
         <div class="resource-group">
             <div class="res-item">VESI: <span id="res-water">0</span>/10</div>
             <div class="res-item">RUOKA: <span id="res-food">0</span>/10</div>
@@ -31,7 +29,6 @@
                 <h2>ALUKSEN LOKI</h2>
                 <span id="current-location">SIJAINTI: MAA-ASEMA</span>
             </div>
-            
             <div id="event-display">
                 <p class="system-text">Järjestelmä alustettu. Odota koordinaatteja...</p>
             </div>
@@ -40,4 +37,19 @@
         <section class="navigation-panel">
             <h3>VALITSE SEURAAVA KOHDE</h3>
             <div id="planet-list">
-                <div class="planet-card-placeholder">Etsitään reittejä
+                <div class="planet-card-placeholder">Etsitään reittejä...</div>
+            </div>
+        </section>
+    </main>
+
+    <div id="modal-overlay" class="hidden">
+        <div class="modal-content">
+            <h2 id="modal-title"></h2>
+            <p id="modal-desc"></p>
+            <button class="btn-primary" onclick="closeModal()">PELAA UUDESTAAN</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
