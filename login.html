@@ -41,6 +41,12 @@
         button:hover {
             background-color: #45a049;
         }
+
+        #virhe-viesti {
+            color: #f44336;
+            margin-top: 10px;
+            display: none;
+        }
     </style>
 
 </head>
@@ -55,22 +61,30 @@
     <input id="password" type="password" placeholder="Salasana"><br>
 
     <button onclick="login()">Login</button>
+
+    <p id="virhe-viesti">Väärä käyttäjänimi tai salasana</p>
 </div>
 
 <script>
 async function login() {
-    const user = document.getElementById("user").value;
-    const password = document.getElementById("password").value;
+    var user = document.getElementById("user").value;
+    var password = document.getElementById("password").value;
 
-    await fetch("http://localhost:3000/login", {
+    var vastaus = await fetch("http://localhost:3000/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ user, password })
+        body: JSON.stringify({ user: user, password: password })
     });
 
-    alert("Olet kirjautunut, onneksi olkoon!");
+    var data = await vastaus.json();
+
+    if (data.status === "ok") {
+        window.location.href = "Pelihtml.html";
+    } else {
+        document.getElementById("virhe-viesti").style.display = "block";
+    }
 }
 </script>
 
