@@ -181,5 +181,41 @@ def check_victory():
         print(f"Check victory error: {e}")
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
+
+#endscreen
+@app.route('/api/game/status', methods=['POST'])
+def game_status():
+    try:
+        player_name = request.json.get('player_name')
+        game = games.get(player_name)
+
+        if not game:
+            return jsonify({'status': 'error', 'message': 'Game not found'}), 404
+
+        victory = game.check_victory()
+        out_of_fuel = game.fuel <= 0
+
+        ended = victory or out_of_fuel
+
+        reason = None
+        if victory:
+            reason = 'victory'
+        elif out_of_fuel:
+            reason = 'fuel'
+
+        return jsonify({
+            'status': 'ok',
+            'ended': ended,
+            'reason': reason,
+            'round': game.round,
+            'fuel': game.fuel,
+            'resources': game.resources,
+            'planets_visited': game.planets_visited
+        })
+    except Exception as e:
+        print(f"Game status error: {e}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

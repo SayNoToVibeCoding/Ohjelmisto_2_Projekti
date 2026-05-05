@@ -103,6 +103,18 @@ function triggerRandomEvent() {
     });
 }
 
+function goToEndScreen(reason) {
+    sessionStorage.setItem('gameEndData', JSON.stringify({
+        reason: reason,
+        round: currentGameState.round,
+        fuel: currentGameState.fuel,
+        recources: currentGameState.resources,
+        planetsVisited: currentGameState.planetsVisited
+    }));
+
+    window.location.href = '/endscreen.html'
+}
+
 function checkVictory() {
     fetch('http://localhost:5000/api/game/check-victory', {
         method: 'POST',
@@ -115,9 +127,11 @@ function checkVictory() {
     .then(function(data) {
         if (data.status === 'ok') {
             if (data.victory) {
-                showVictoryModal();
+                goToEndScreen('victory');
+                return;
             } else if (data.fuel <= 0) {
-                showGameOverModal('Polttoaine loppui!');
+                goToEndScreen('fuel');
+                return;
             } else {
                 setTimeout(function() {
                     loadRound();
