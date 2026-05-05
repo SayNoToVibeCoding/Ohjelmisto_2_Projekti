@@ -44,6 +44,14 @@ CREATE TABLE IF NOT EXISTS `airport` (
   CONSTRAINT `airport_ibfk_1` FOREIGN KEY (`iso_country`) REFERENCES `country` (`iso_country`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user` (`user`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
 -- Dumping data for table testi.airport: ~71 131 rows (approximately)
 REPLACE INTO `airport` (`id`, `ident`, `type`, `name`, `latitude_deg`, `longitude_deg`, `elevation_ft`, `continent`, `iso_country`, `iso_region`, `municipality`, `scheduled_service`, `gps_code`, `iata_code`, `local_code`, `home_link`, `wikipedia_link`, `keywords`) VALUES
 	(6523, '00A', 'heliport', 'Total Rf Heliport', 40.07080078125, -74.93360137939453, 11, 'NA', 'US', 'US-PA', 'Bensalem', 'no', '00A', '', '00A', '', '', ''),
