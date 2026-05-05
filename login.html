@@ -80,11 +80,10 @@ async function login() {
 
     var data = await vastaus.json();
 
-    if (data.status === "ok") {
-        window.location.href = "Pelihtml.html";
-    } else {
-        document.getElementById("virhe-viesti").style.display = "block";
-    }
+    if (data.status === 'ok') {
+    localStorage.setItem('playerName', user);
+    window.location.href = '/Pelihtml.html';
+}
 }
 </script>
 
