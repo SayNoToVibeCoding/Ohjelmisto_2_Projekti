@@ -12,7 +12,7 @@ window.addEventListener('load', function () {
     document.getElementById('play-again').addEventListener('click', playAgain);
     document.getElementById('go-login').addEventListener('click', goLogin);
 
-    const raw = sessionStorage.getItem('gameEnddata');
+    const raw = sessionStorage.getItem('gameEndData');
     const data = raw ? JSON.parse(raw) : null;
 
     const title = document.getElementById('end-title');
@@ -25,19 +25,27 @@ window.addEventListener('load', function () {
         return;
     }
 
-     if (data.reason === 'victory') {
-    title.textContent = 'VOITTO!';
-    subtitle.textContent = 'Onnittelut';
-    display.innerHTML =
-      '<p class="system-text">Löysit sopivan planeetan ihmiskunnalle!</p>' +
-      '<p>Kerätyt resurssit:</p>' +
-      '<ul>' +
-        '<li>Vesi: <strong>' + data.resources.Water + '</strong></li>' +
-        '<li>Ruoka: <strong>' + data.resources.Food + '</strong></li>' +
-        '<li>Teknologia: <strong>' + data.resources.Technology + '</strong></li>' +
-      '</ul>';
-    return;
-  }
+    if (data.reason === 'victory') {
+  title.textContent = 'VOITTO!';
+  subtitle.textContent = 'Onnittelut';
+
+  const r = data.resources || {};
+  const water = r.Water ?? r.water ?? 0;
+  const food = r.Food ?? r.food ?? 0;
+  const tech = r.Technology ?? r.technology ?? r.tech ?? 0;
+
+  display.innerHTML =
+    '<p class="system-text">Löysit sopivan planeetan ihmiskunnalle!</p>' +
+    '<p>Kerätyt resurssit:</p>' +
+    '<ul>' +
+      '<li>Vesi: <strong>' + water + '</strong></li>' +
+      '<li>Ruoka: <strong>' + food + '</strong></li>' +
+      '<li>Teknologia: <strong>' + tech + '</strong></li>' +
+    '</ul>';
+
+  return;
+}
+
 
   if (data.reason === 'fuel') {
     title.textContent = 'Game Over';

@@ -109,7 +109,7 @@ function goToEndScreen(reason) {
         reason: reason,
         round: currentGameState.round,
         fuel: currentGameState.fuel,
-        recources: currentGameState.resources,
+        resources: currentGameState.resources,
         planetsVisited: currentGameState.planetsVisited
     }));
 
