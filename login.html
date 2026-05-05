@@ -70,7 +70,7 @@ async function login() {
     var user = document.getElementById("user").value;
     var password = document.getElementById("password").value;
 
-    var vastaus = await fetch("http://localhost:3000/login", {
+    var vastaus = await fetch("http://localhost:5000/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
