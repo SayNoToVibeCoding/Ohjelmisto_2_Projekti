@@ -14,7 +14,6 @@ function initGame(playerName) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ player_name: playerName })
     })
-}
 
     .then(function(response) { 
         return response.json(); 
