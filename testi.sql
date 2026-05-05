@@ -71319,9 +71319,9 @@ CREATE TABLE IF NOT EXISTS `game_event` (
   `event_id` int(11) DEFAULT NULL,
   `round` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Dumping data for table testi.game_event: ~46 rows (approximately)
+-- Dumping data for table testi.game_event: ~48 rows (approximately)
 REPLACE INTO `game_event` (`id`, `game_id`, `event_id`, `round`) VALUES
 	(1, NULL, 17, 1),
 	(2, NULL, 12, 2),
@@ -71368,7 +71368,9 @@ REPLACE INTO `game_event` (`id`, `game_id`, `event_id`, `round`) VALUES
 	(43, NULL, 17, 1),
 	(44, NULL, 10, 1),
 	(45, NULL, 12, 1),
-	(46, NULL, 4, 2);
+	(46, NULL, 4, 2),
+	(47, NULL, 4, 1),
+	(48, NULL, 20, 2);
 
 -- Dumping structure for table testi.goal
 CREATE TABLE IF NOT EXISTS `goal` (
@@ -71424,11 +71426,12 @@ CREATE TABLE IF NOT EXISTS `player` (
   `last_played` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Dumping data for table testi.player: ~1 rows (approximately)
+-- Dumping data for table testi.player: ~2 rows (approximately)
 REPLACE INTO `player` (`id`, `name`, `level`, `fuel`, `water`, `food`, `technology`, `current_planet_id`, `last_played`) VALUES
-	(1, 'petteri', 2, 68, 9, 8, 5, 1, '2026-03-10 19:07:18');
+	(1, 'petteri', 2, 68, 9, 8, 5, 1, '2026-03-10 19:07:18'),
+	(3, 'Matti', 2, 56, 3, 0, 7, 1, '2026-03-11 05:40:03');
 
 -- Dumping structure for table testi.resource
 CREATE TABLE IF NOT EXISTS `resource` (
@@ -71436,13 +71439,26 @@ CREATE TABLE IF NOT EXISTS `resource` (
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- Dumping data for table testi.resource: ~3 rows (approximately)
 REPLACE INTO `resource` (`id`, `name`) VALUES
 	(1, 'Water'),
 	(2, 'Food'),
 	(3, 'Technology');
+
+-- Dumping structure for table testi.users
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user` (`user`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- Dumping data for table testi.users: ~1 rows (approximately)
+REPLACE INTO `users` (`id`, `user`, `password`) VALUES
+	(1, 'testi', '1234');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
