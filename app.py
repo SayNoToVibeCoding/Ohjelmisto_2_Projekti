@@ -3,7 +3,11 @@ from flask_cors import CORS
 import mysql.connector
 from mysql.connector import Error
 
+<<<<<<< HEAD
 from game_logic import SpaceGame
+=======
+from gamelogic import SpaceGame
+>>>>>>> origin/Ahmed
 
 app = Flask(__name__)
 CORS(app)
@@ -11,7 +15,11 @@ CORS(app)
 db_config = {
     "host": "127.0.0.1",
     "user": "root",
+<<<<<<< HEAD
     "password": "roni1234",
+=======
+    "password": "ahmed12345",
+>>>>>>> origin/Ahmed
     "database": "testi",
     "port": 3306,
 }
