@@ -79,8 +79,7 @@ def create_game():
         game.player_name = player_name
         game.create_game()
 
-        session_token = secrets.token_hex(16)
-        games[session_token] = game
+        games[player_name] = game
 
         
         return jsonify({
