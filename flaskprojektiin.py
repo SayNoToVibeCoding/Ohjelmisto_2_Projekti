@@ -78,8 +78,10 @@ def create_game():
         game = SpaceGame(db_config)
         game.player_name = player_name
         game.create_game()
-        
-        games[player_name] = game
+
+        session_token = secrets.token_hex(16)
+        games[session_token] = game
+
         
         return jsonify({
             'status': 'ok',
