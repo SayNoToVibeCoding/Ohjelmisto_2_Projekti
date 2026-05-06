@@ -24,10 +24,24 @@
 
 <script>
   document.getElementById('player-name').textContent = localStorage.getItem('playerName') || 'Unknown';
+  function continueGame() {
+    window.location.href = '/Pelihtml.html?mode=continue';
+  }
+
+  function newGame() {
+    const playerName = localStorage.getItem('playerName');
+    fetch('/api/game/reset', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ player_name: playerName })
+    }).then(() => {
+      window.location.href = '/Pelihtml.html?mode=new';
+    });
+  }
 </script>
 
-<button onclick="window.location.href='/Pelihtml.html'">Start</button>
-<button>Logout</button>
+<button onclick="continueGame()">Continue</button>
+<button onclick="newGame()">New Game</button>
 <button onclick="localStorage.removeItem('playerName'); window.location.href='/login.html'">Logout</button>
 <button onclick="alert('You can now close this tab.')">Quit</button>
 

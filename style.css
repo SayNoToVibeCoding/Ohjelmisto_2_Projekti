@@ -146,3 +146,22 @@ body {
     cursor: pointer;
     margin-top: 20px;
 }
+
+
+.planet-card {
+  padding: 14px 16px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+}
+
+.planet-card:hover {
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(0, 255, 255, 0.15);
+}
+
+.planet-card:hover strong {
+  color: var(--accent-color);
+}

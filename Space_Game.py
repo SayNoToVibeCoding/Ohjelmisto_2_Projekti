@@ -1,3 +1,4 @@
+import uuid
 import random
 import mysql.connector
 from mysql.connector import Error
@@ -23,6 +24,78 @@ class SpaceGame:
         except Error as e:
             print(f"Failed to connect to database: {e}")
             raise
+
+    def db_save_minimal(self):
+        """Save only what you show in UI: fuel, resources, visited count."""
+        if not self.player_name:
+            return
+
+        visited_count = len(self.planets_visited)
+
+        try:
+            # make sure row exists (name is UNIQUE)
+            self.cursor.execute("INSERT IGNORE INTO player (name) VALUES (%s)", (self.player_name,))
+
+            self.cursor.execute("""
+                                UPDATE player
+                                SET fuel=%s,
+                                    water=%s,
+                                    food=%s,
+                                    technology=%s,
+                                    level=%s
+                                WHERE name = %s
+                                """, (
+                                    int(self.fuel),
+                                    int(self.resources["Water"]),
+                                    int(self.resources["Food"]),
+                                    int(self.resources["Technology"]),
+                                    int(visited_count),
+                                    self.player_name
+                                ))
+            self.db.commit()
+        except Error as e:
+            print(f"DB save warning: {e}")
+            self.db.rollback()
+
+    def db_load_minimal(self):
+
+        if not self.player_name:
+            return False
+
+        try:
+            self.cursor.execute("""
+                                SELECT fuel, water, food, technology, level
+                                FROM player
+                                WHERE name = %s LIMIT 1
+                                """, (self.player_name,))
+            row = self.cursor.fetchone()
+            if not row:
+                return False
+
+            self.fuel = int(row["fuel"] or 100)
+            self.resources["Water"] = int(row["water"] or 0)
+            self.resources["Food"] = int(row["food"] or 0)
+            self.resources["Technology"] = int(row["technology"] or 0)
+
+            visited_count = int(row["level"] or 0)
+
+            self.planets_visited = [None] * visited_count
+
+            visited_count = int(row["level"] or 0)
+            fuel = int(row["fuel"] or 100)
+            water = int(row["water"] or 0)
+            food = int(row["food"] or 0)
+            tech = int(row["technology"] or 0)
+
+
+            if fuel == 100 and visited_count in (0, 1) and water == 0 and food == 0 and tech == 0:
+                return False
+
+            return True
+        except Error as e:
+            print(f"DB load warning: {e}")
+            return False
+
 
     def create_game(self):
         try:
@@ -125,6 +198,7 @@ class SpaceGame:
 
         except Error as e:
             print(f"Event error: {e}")
+        self.db_save_minimal()
 
         return roll
 
@@ -152,6 +226,7 @@ class SpaceGame:
             print("  Nothing of value here...")
 
         self.planets_visited.append(planet['name'])
+        self.db_save_minimal()
         return True
 
     def check_victory(self):
@@ -171,15 +246,29 @@ class SpaceGame:
 
         self.player_name = input("Enter your pilot name: ")
 
-        save_file = load_game(self.player_name)
-        if save_file:
-            self.fuel = save_file['fuel']
-            self.round = save_file['level']
-            self.resources['Water'] = save_file.get('water', 0)
-            self.resources['Food'] = save_file.get('food', 0)
-            self.resources['Technology'] = save_file.get('technology', 0)
-        else:
+
+        loaded = self.db_load_minimal()
+
+
+        if not loaded:
+            save_file = load_game(self.player_name)
+            if save_file:
+                self.fuel = save_file['fuel']
+                self.resources['Water'] = save_file.get('water', 0)
+                self.resources['Food'] = save_file.get('food', 0)
+                self.resources['Technology'] = save_file.get('technology', 0)
+
+                visited_count = int(save_file.get('level', 0))
+                self.planets_visited = [None] * visited_count
+
+                loaded = True
+
+
+        if not loaded:
             self.create_game()
+
+
+        self.db_save_minimal()
 
         while True:
             planets = self.get_planets()
@@ -197,6 +286,7 @@ class SpaceGame:
                 print(f"You explored {self.round} rounds.")
                 print("=" * 70)
                 save_game(self.player_name, self.round, self.fuel, self.resources["Water"], self.resources["Food"], self.resources["Technology"], 1)
+                self.db_save_minimal()
                 break
 
             self.show_round_info(affordable_planets)
@@ -224,6 +314,7 @@ class SpaceGame:
                 print("=" * 70)
                 save_game(self.player_name, self.round, self.fuel, self.resources["Water"], self.resources["Food"], self.resources["Technology"], selected["ident"])
                 delete_game(self.player_name)
+                self.db_save_minimal()
                 break
 
             if self.check_victory():
@@ -234,9 +325,11 @@ class SpaceGame:
                 print("=" * 70)
                 save_game(self.player_name, self.round, self.fuel, self.resources["Water"], self.resources["Food"], self.resources["Technology"], 1)
                 delete_game(self.player_name)
+                self.db_save_minimal()
                 break
 
             save_game(self.player_name, self.round, self.fuel, self.resources["Water"], self.resources["Food"], self.resources["Technology"], 1)
+            self.db_save_minimal()
 
             self.round += 1
             input("\nPress Enter for next round...")

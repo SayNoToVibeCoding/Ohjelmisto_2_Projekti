@@ -15,6 +15,61 @@ db_config = {
     'auth_plugin': 'mysql_native_password'
 }
 
+def load_player_state(player_name):
+    db = get_db_connection()
+    if not db:
+        return None
+    try:
+        cur = db.cursor(dictionary=True)
+        cur.execute("""
+            SELECT fuel, water, food, technology, level
+            FROM player
+            WHERE name=%s
+            LIMIT 1
+        """, (player_name,))
+        row = cur.fetchone()
+        cur.close()
+        db.close()
+        return row
+    except Error as e:
+        print(f"load_player_state error: {e}")
+        try:
+            db.close()
+        except Exception:
+            pass
+        return None
+
+def save_player_state(player_name, fuel, resources, planets_visited_count):
+    db = get_db_connection()
+    if not db:
+        return
+    try:
+        cur = db.cursor()
+        # ensure player row exists
+        cur.execute("INSERT IGNORE INTO player (name) VALUES (%s)", (player_name,))
+        cur.execute("""
+            UPDATE player
+            SET fuel=%s, water=%s, food=%s, technology=%s, level=%s
+            WHERE name=%s
+        """, (
+            int(fuel),
+            int(resources.get("Water", 0)),
+            int(resources.get("Food", 0)),
+            int(resources.get("Technology", 0)),
+            int(planets_visited_count),
+            player_name
+        ))
+        db.commit()
+        cur.close()
+        db.close()
+    except Error as e:
+        print(f"save_player_state error: {e}")
+        try:
+            db.rollback()
+            db.close()
+        except Exception:
+            pass
+
 def get_db_connection():
     try:
         return mysql.connector.connect(**db_config)
@@ -74,20 +129,57 @@ def game_page():
 def create_game():
     try:
         player_name = request.json.get('player_name')
-        
+
+        # If game already in memory, return it
+        game = games.get(player_name)
+        if game:
+            return jsonify({
+                'status': 'ok',
+                'game_id': game.game_id,
+                'fuel': game.fuel,
+                'resources': game.resources,
+                'planets_visited': game.planets_visited
+            })
+
+        # Create a new in-memory game object
         game = SpaceGame(db_config)
         game.player_name = player_name
-        game.create_game()
+
+        # Load saved state from DB (player table)
+        state = load_player_state(player_name)
+        if state and not (
+            (state.get("fuel") in (None, 100)) and
+            (state.get("water") in (None, 0)) and
+            (state.get("food") in (None, 0)) and
+            (state.get("technology") in (None, 0)) and
+            (state.get("level") in (None, 0, 1))
+        ):
+            game.fuel = int(state.get("fuel") or 100)
+            game.resources["Water"] = int(state.get("water") or 0)
+            game.resources["Food"] = int(state.get("food") or 0)
+            game.resources["Technology"] = int(state.get("technology") or 0)
+
+            visited = int(state.get("level") or 0)
+            game.planets_visited = [None] * visited
+        else:
+            # No usable save -> start fresh (DON'T call game.create_game() to avoid game.id error)
+            game.fuel = 100
+            game.resources = {"Water": 0, "Food": 0, "Technology": 0}
+            game.planets_visited = []
+
+            # and persist initial state so next time we can load it
+            save_player_state(player_name, game.fuel, game.resources, len(game.planets_visited))
 
         games[player_name] = game
 
-        
         return jsonify({
             'status': 'ok',
             'game_id': game.game_id,
             'fuel': game.fuel,
-            'resources': game.resources
+            'resources': game.resources,
+            'planets_visited': game.planets_visited
         })
+
     except Exception as e:
         print(f"Create game error: {e}")
         return jsonify({'status': 'error', 'message': str(e)}), 500
@@ -215,6 +307,35 @@ def game_status():
         })
     except Exception as e:
         print(f"Game status error: {e}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.route('/api/game/reset', methods=['POST'])
+def reset_game():
+    try:
+        player_name = request.json.get('player_name')
+
+        # remove in-memory game
+        if player_name in games:
+            del games[player_name]
+
+        # reset DB save
+        db = get_db_connection()
+        if not db:
+            return jsonify({'status': 'error', 'message': 'Tietokantavirhe'}), 500
+
+        cur = db.cursor()
+        cur.execute("""
+            UPDATE player
+            SET fuel=100, water=0, food=0, technology=0, level=0
+            WHERE name=%s
+        """, (player_name,))
+        db.commit()
+        cur.close()
+        db.close()
+
+        return jsonify({'status': 'ok'})
+    except Exception as e:
+        print(f"Reset game error: {e}")
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 
