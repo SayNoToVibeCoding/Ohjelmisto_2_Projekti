@@ -20,12 +20,16 @@
 <body>
 
 <h1>MY GAME</h1>
-<p>Player: Sitku123</p>
+<p>Player: <span id="player-name"></span></p>
 
-<button>Start</button>
-<button>Settings</button>
+<script>
+  document.getElementById('player-name').textContent = localStorage.getItem('playerName') || 'Unknown';
+</script>
+
+<button onclick="window.location.href='/Pelihtml.html'">Start</button>
 <button>Logout</button>
-<button>Quit</button>
+<button onclick="localStorage.removeItem('playerName'); window.location.href='/login.html'">Logout</button>
+<button onclick="alert('You can now close this tab.')">Quit</button>
 
 </body>
 </html>
